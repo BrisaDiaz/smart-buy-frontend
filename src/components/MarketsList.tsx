@@ -16,7 +16,7 @@ export default function MarketsList() {
       <section>
         <div className="markets__list">
           <img alt="vea" className="market__logo" src={veaLogo} />
-          <img alt="carrefour" className="market__logo" src={carrefourLogo} />
+          {/* <img alt="carrefour" className="market__logo" src={carrefourLogo} /> */}
           <img alt="la anonima online" className="market__logo" src={laAnonimaLogo} />
           <img alt="coto" className="market__logo" src={cotoLogo} />
           <img alt="cordiez" className="market__logo" src={cordiezLogo} />
