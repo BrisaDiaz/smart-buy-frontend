@@ -1,5 +1,5 @@
 import veaLogo from "../public/vea-logo.png";
-import carrefourLogo from "../public/carrefour-logo.png";
+// import carrefourLogo from "../public/carrefour-logo.png";
 import hiperlibertadLogo from "../public/hiperlibertad-logo.png";
 import discoLogo from "../public/disco-logo.png";
 import cotoLogo from "../public/coto-logo.png";
