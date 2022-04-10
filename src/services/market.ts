@@ -7,7 +7,7 @@ export async function getMarketsProducts(search: string, markets: string[]) {
   markets.forEach((market) => query.append("market", market));
 
   const res = await fetch(
-    `${API_BASE_PATH}api/v1/market/search?${query.toString()}`,
+    `${API_BASE_PATH}/api/v1/market/search?${query.toString()}`,
   );
 
   const json = await res.json();
