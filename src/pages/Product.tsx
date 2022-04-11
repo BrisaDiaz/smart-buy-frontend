@@ -2,20 +2,22 @@ import React from "react";
 import {useLocation, useNavigate, Link} from "react-router-dom";
 import {useQuery, useMutation} from "react-query";
 import {Breadcrumb, message} from "antd";
-
+import { extractProductDataFromParams } from "../utils";
 import ProductsDetails from "../components/ProductDetails";
 import ProductDetailsSkeleton from "../components/ProductDetailsSkeleton";
-import {getTrackedProduct, createProductRecord} from "../services/tracker";
-import {TrackedProduct, TrackedPrice, Product} from "../interfaces";
+import { getTrackedProduct, createProductRecord } from "../services/tracker";
+import { TrackedProduct, TrackedPrice, Product } from "../interfaces";
 import Header from "../components/Header";
 import LinearChart from "../components/LinearChart";
 export default function ProductPage() {
   const location = useLocation();
-  const statedProduct: Product = location.state as Product;
+  const statedProduct =
+    (location.state as Product |  null) ||
+    (extractProductDataFromParams(location.search) as Product| undefined);
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    if (!statedProduct) return navigate("/404", {replace: true});
+    if (!statedProduct) return navigate("/404", { replace: true });
   }, []);
   const notification = (type: "success" | "error", content: string) => {
     if (type === "success") return message.success(content);
@@ -30,18 +32,21 @@ export default function ProductPage() {
     link: string;
     market: string;
     id?: string;
-  } | null>(statedProduct || null);
+  } | null>((statedProduct as Product) || null);
   const [priceHistory, setPriceHistory] = React.useState<
-    {createdAt: string; value: number; productId: string}[]
+    { createdAt: string; value: number; productId: string }[]
   >([]);
   const trackedProductRequest = useQuery(
-    ["product", statedProduct?.link],
+    ["product", statedProduct ? statedProduct?.link : ""],
     () => getTrackedProduct(product?.link || ""),
     {
       retry: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
-      onSuccess: (data: {product: TrackedProduct; priceHistory: TrackedPrice[]}) => {
+      onSuccess: (data: {
+        product: TrackedProduct;
+        priceHistory: TrackedPrice[];
+      }) => {
         setPriceHistory(data.priceHistory);
         setProduct(data.product);
       },
@@ -61,7 +66,10 @@ export default function ProductPage() {
     {
       onSuccess: (productRecord) => {
         setProduct(productRecord);
-        notification("success", "Se ha inizializado el seguiminto de precios de forma exitosa");
+        notification(
+          "success",
+          "Se ha inizializado el seguiminto de precios de forma exitosa",
+        );
       },
       onError: () => {
         notification(
@@ -76,20 +84,25 @@ export default function ProductPage() {
     await createRecordRequest.mutate();
   };
 
-  function getPriceVariation(currentPrice: number, priceHistory: TrackedPrice[]) {
+  function getPriceVariation(
+    currentPrice: number,
+    priceHistory: TrackedPrice[],
+  ) {
     const lastVariation =
-      priceHistory.find((price) => price.value !== currentPrice)?.value || currentPrice;
+      priceHistory.find((price) => price.value !== currentPrice)?.value ||
+      currentPrice;
     const difference = currentPrice - lastVariation;
 
     return {
-      trend: difference === 0 ? "equal" : difference > 0 ? "increase" : "decrease",
+      trend:
+        difference === 0 ? "equal" : difference > 0 ? "increase" : "decrease",
       value: Math.abs(difference),
     };
   }
   const priceVariation =
     priceHistory.length > 1
       ? getPriceVariation(product?.price as number, priceHistory)
-      : {trend: "increase", value: 0};
+      : { trend: "increase", value: 0 };
 
   if (!statedProduct) return <div />;
 
@@ -124,7 +137,9 @@ export default function ProductPage() {
             onTrack={handleInitTracking}
           />
         )}
-        {product && trackedProductRequest.isLoading && <ProductDetailsSkeleton product={product} />}
+        {product && trackedProductRequest.isLoading && (
+          <ProductDetailsSkeleton product={product} />
+        )}
         {priceHistory.length > 1 && (
           <section>
             <div className="chart__summary">
@@ -142,7 +157,8 @@ export default function ProductPage() {
                   >
                     {priceVariation.trend === "increase" ? "subió" : "bajó"}
                   </span>{" "}
-                  <strong>${priceVariation.value} </strong> con respecto al anterior.
+                  <strong>${priceVariation.value} </strong> con respecto al
+                  anterior.
                 </p>
               )}
             </div>

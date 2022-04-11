@@ -1,6 +1,6 @@
 import {Tooltip, Card, Avatar} from "antd";
 import {Link} from "react-router-dom";
-import { generateSlug } from "../utils";
+import { generateProductUrl } from "../utils";
 import { Product } from "../interfaces";
 import { logoTable } from "../constants";
 export default function ProductCard({ product }: { product: Product }) {
@@ -37,7 +37,7 @@ export default function ProductCard({ product }: { product: Product }) {
             <Link
               className="product__link"
               state={product}
-              to={`/product/${generateSlug(product.title)}`}
+              to={generateProductUrl(product)}
             >
               <h2 className="product__name">{product.title}</h2>
             </Link>

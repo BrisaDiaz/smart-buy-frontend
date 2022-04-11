@@ -22,6 +22,7 @@ export const MARKET_OPTIONS = [
   "super mami",
   "vea",
 ];
+
 export const logoTable: {[key: string]: string} = {
   cordiez: cordiezLogo,
   hiperlibertad: hiperlibertadLogo,
