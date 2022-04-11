@@ -28,3 +28,8 @@ export const getValidSearchParams = () => {
 
   return {markets: params.getAll("market"), query: params.get("query") || ""};
 };
+
+export const generateSlug = (string: string) => {
+  const slug = string.trim().toLowerCase().replaceAll(" ", "-");
+  return slug;
+};
