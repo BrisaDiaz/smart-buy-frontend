@@ -14,7 +14,7 @@ const queryClient = new QueryClient();
 ReactDOM.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <HashRouter >
+      <HashRouter>
         <Routes>
           <Route element={<App />} path="/" />
           <Route element={<Product />} path="/product/:slug" />

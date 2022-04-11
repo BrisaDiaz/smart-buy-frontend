@@ -1,9 +1,7 @@
 import {Product} from "../interfaces";
-import { API_BASE_PATH } from "../constants";
+import {API_BASE_PATH} from "../constants";
 export async function getTrackedProduct(link: string) {
-  const res = await fetch(
-    `${API_BASE_PATH}/api/v1/tracker/products?link=${link}`,
-  );
+  const res = await fetch(`${API_BASE_PATH}/api/v1/tracker/products?link=${link}`);
 
   const json = await res.json();
 
@@ -15,7 +13,7 @@ export async function createProductRecord(product: Product) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ product }),
+    body: JSON.stringify({product}),
   });
   const json = await res.json();
 

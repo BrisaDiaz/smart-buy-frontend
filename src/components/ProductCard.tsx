@@ -1,29 +1,21 @@
 import {Tooltip, Card, Avatar} from "antd";
 import {Link} from "react-router-dom";
-import { generateProductUrl } from "../utils";
-import { Product } from "../interfaces";
-import { logoTable } from "../constants";
-export default function ProductCard({ product }: { product: Product }) {
+
+import {generateProductUrl} from "../utils";
+import {Product} from "../interfaces";
+import {logoTable} from "../constants";
+export default function ProductCard({product}: {product: Product}) {
   return (
     <>
       <Card
         key={product.link}
         className="product__card"
-        cover={
-          <img
-            alt={product.title}
-            className="product__img"
-            src={product.image}
-          />
-        }
+        cover={<img alt={product.title} className="product__img" src={product.image} />}
       >
         <Card.Meta
           avatar={
             <Tooltip title={product.market}>
-              <Avatar
-                className="product__market"
-                src={logoTable[product.market]}
-              />
+              <Avatar className="product__market" src={logoTable[product.market]} />
             </Tooltip>
           }
           description={
@@ -34,11 +26,7 @@ export default function ProductCard({ product }: { product: Product }) {
             </div>
           }
           title={
-            <Link
-              className="product__link"
-              state={product}
-              to={generateProductUrl(product)}
-            >
+            <Link className="product__link" state={product} to={generateProductUrl(product)}>
               <h2 className="product__name">{product.title}</h2>
             </Link>
           }
