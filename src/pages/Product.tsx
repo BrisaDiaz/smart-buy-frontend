@@ -35,25 +35,8 @@ export default function ProductPage() {
     id?: string;
   } | null>((statedProduct as Product) || null);
   const [priceHistory, setPriceHistory] = React.useState<
-    { createdAt: string; value: number; productId: string }[]
-  >([
-    {
-      createdAt: "2022-04-11T18:34:45.890Z",
-      productId: "dgOwLccQlU9RlZwAeKWe",
-      value: 159.83,
-    },
-
-    {
-      createdAt: "2022-04-10T18:34:45.890Z",
-      productId: "dgOwLccQlU9RlZwAeKWe",
-      value: 140,
-    },
-    {
-      createdAt: "2022-04-08T18:34:45.890Z",
-      productId: "dgOwLccQlU9RlZwAeKWe",
-      value: 135.83,
-    },
-  ]);
+    {createdAt: string; value: number; productId: string}[]
+  >([]);
   const trackedProductRequest = useQuery(
     ["product", statedProduct ? statedProduct?.link : ""],
     () => getTrackedProduct(product?.link || ""),
@@ -61,11 +44,8 @@ export default function ProductPage() {
       retry: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
-      onSuccess: (data: {
-        product: TrackedProduct;
-        priceHistory: TrackedPrice[];
-      }) => {
-        // setPriceHistory(data.priceHistory);
+      onSuccess: (data: {product: TrackedProduct; priceHistory: TrackedPrice[]}) => {
+        setPriceHistory(data.priceHistory);
         setProduct(data.product);
       },
     },
@@ -84,10 +64,7 @@ export default function ProductPage() {
     {
       onSuccess: (productRecord) => {
         setProduct(productRecord);
-        notification(
-          "success",
-          "Se ha inizializado el seguiminto de precios de forma exitosa",
-        );
+        notification("success", "Se ha inizializado el seguiminto de precios de forma exitosa");
       },
       onError: () => {
         notification(
@@ -102,18 +79,13 @@ export default function ProductPage() {
     await createRecordRequest.mutate();
   };
 
-  function getPriceVariation(
-    currentPrice: number,
-    priceHistory: TrackedPrice[],
-  ) {
+  function getPriceVariation(currentPrice: number, priceHistory: TrackedPrice[]) {
     const lastVariation =
-      priceHistory.find((price) => price.value !== currentPrice)?.value ||
-      currentPrice;
+      priceHistory.find((price) => price.value !== currentPrice)?.value || currentPrice;
     const difference = currentPrice - lastVariation;
 
     return {
-      trend:
-        difference === 0 ? "equal" : difference > 0 ? "increase" : "decrease",
+      trend: difference === 0 ? "equal" : difference > 0 ? "increase" : "decrease",
       value: Math.abs(difference).toFixed(2),
     };
   }
@@ -156,10 +128,10 @@ export default function ProductPage() {
           />
         )}
         {product && trackedProductRequest.isLoading && <ProductDetailsSkeleton product={product} />}
-        {priceHistory.length > 1 && (
+        {priceHistory.length > 0 && (
           <section>
             <div className="chart__summary">
-              {priceVariation.trend === "equal" ? (
+              {priceVariation.value === 0 ? (
                 <p>No sea ha detectado una variación de precio</p>
               ) : (
                 <p>

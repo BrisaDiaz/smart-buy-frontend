@@ -1,10 +1,6 @@
 import * as d3 from "d3";
-
 import React from "react";
-interface ChartData {
-  date: Date;
-  value: number;
-}
+type ChartData = [number, number];
 function LinearChart({
   chartData,
 }: {
@@ -46,8 +42,7 @@ function LinearChart({
     const I = d3.range(X.length) as number[];
 
     if (defined === undefined)
-      defined = (d: ChartData, i: number) =>
-        !isNaN(X[i] as number) && !isNaN(Y[i] as number);
+      defined = (d: ChartData, i: number) => !isNaN(X[i] as number) && !isNaN(Y[i] as number);
 
     const D: boolean[] = d3.map(data, defined);
 
@@ -108,10 +103,7 @@ function LinearChart({
           .attr("fill", "currentColor")
           .attr("text-anchor", "start")
           .text(yLabel)
-          .attr(
-            "style",
-            "transform: translate(0rem,-1em);font-size: 14px;opacity: 0.8;",
-          ),
+          .attr("style", "transform: translate(0rem,-1em);font-size: 14px;opacity: 0.8;"),
       );
 
     svg
@@ -134,9 +126,9 @@ function LinearChart({
         "d",
         d3
           .area()
-          .x((d: ChartData) => xScale(d.date))
+          .x((d: ChartData) => xScale(d[0]))
           .y0(height - marginBottom)
-          .y1((d) => yScale(d.value)),
+          .y1((d) => yScale(d[1])),
       );
     svg
       .selectAll("myCircles")
@@ -146,28 +138,26 @@ function LinearChart({
       .attr("fill", "#f44336")
       .attr("stroke", "none")
       .attr("cx", function (d) {
-        return xScale(d.date);
+        return xScale(d[0]);
       })
       .attr("cy", function (d) {
-        return yScale(d.value);
+        return yScale(d[1]);
       })
       .attr("r", 3)
       .attr("style", "cursor: pointer;")
-      .attr("data-value", (d) => d.value)
+      .attr("data-value", (d) => d[1])
       .on("mouseover", (e) => {
         const value = e.target.getAttribute("data-value");
-        const text = document.querySelector(
-          `text[data-value="${value}"]`,
-        ) as HTMLElement;
+        const text = document.querySelector(`text[data-value="${value}"]`) as HTMLElement;
+
         if (text) {
           text.style.opacity = "1";
         }
       })
       .on("mouseout", (e) => {
         const value = e.target.getAttribute("data-value");
-        const text = document.querySelector(
-          `text[data-value="${value}"]`,
-        ) as HTMLElement;
+        const text = document.querySelector(`text[data-value="${value}"]`) as HTMLElement;
+
         if (text) {
           text.style.opacity = "0";
         }
@@ -179,35 +169,28 @@ function LinearChart({
       .enter()
       .append("text")
       .attr("x", function (d) {
-        return xScale(d.date);
+        return xScale(d[0]);
       })
       .attr("y", function (d) {
-        return yScale(d.value);
+        return yScale(d[1]);
       })
       .attr("text-anchor", "right")
       .attr("fill", "currentColor")
-      .attr(
-        "style",
-        "transform: translate(0, -15px);opacity: 0;font-weight: 700;",
-      )
+      .attr("style", "transform: translate(0, -15px);opacity: 0;font-weight: 700;")
 
-      .text((d) => `$${d.value}`)
-      .attr("data-value", (d) => d.value);
+      .text((d) => `$${d[1]}`)
+      .attr("data-value", (d) => d[1]);
   }
   React.useEffect(() => {
     const parseTime = d3.timeParse("%d/%m/%Y");
-    const formattedData = chartData.map(
-      (price): ChartData => ({
-        date: parseTime(
-          new Date(price.createdAt).toLocaleDateString("en-US"),
-        ) as Date,
-        value: price.value,
-      }),
-    );
+    const formattedData = chartData.map((price) => [
+      parseTime(new Date(price.createdAt).toLocaleDateString("en-US")),
+      price.value,
+    ]);
 
-    LineChart(formattedData, {
-      x: (d: ChartData) => d.date,
-      y: (d: ChartData) => d.value,
+    LineChart(formattedData as any, {
+      x: (d: ChartData) => d[0],
+      y: (d: ChartData) => d[1],
       yLabel: `Registros (${formattedData.length})`,
       width: 1250,
       height: 500,
