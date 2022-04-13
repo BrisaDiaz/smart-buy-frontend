@@ -1,7 +1,7 @@
 import {Product} from "../interfaces";
 import {API_BASE_PATH} from "../constants";
-export async function getTrackedProduct(link: string) {
-  const res = await fetch(`${API_BASE_PATH}/api/v1/tracker/products?link=${link}`);
+export async function getTrackedProduct(link: string, price: number) {
+  const res = await fetch(`${API_BASE_PATH}/api/v1/tracker/products?link=${link}&price=${price}`);
 
   const json = await res.json();
 

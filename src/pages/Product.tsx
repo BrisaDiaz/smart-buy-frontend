@@ -38,8 +38,8 @@ export default function ProductPage() {
     {createdAt: string; value: number; productId: string}[]
   >([]);
   const trackedProductRequest = useQuery(
-    ["product", statedProduct ? statedProduct?.link : ""],
-    () => getTrackedProduct(product?.link || ""),
+    ["product", product ? product?.link : "", product ? product?.price : 0],
+    () => getTrackedProduct(product?.link || "", product?.price || 0),
     {
       retry: false,
       refetchOnWindowFocus: false,
