@@ -145,18 +145,19 @@ function LinearChart({
       })
       .attr("r", 3)
       .attr("style", "cursor: pointer;")
-      .attr("data-value", (d) => d[1])
+
+      .attr("data-date", (d) => d[0])
       .on("mouseover", (e) => {
-        const value = e.target.getAttribute("data-value");
-        const text = document.querySelector(`text[data-value="${value}"]`) as HTMLElement;
+        const date = e.target.getAttribute("data-date");
+        const text = document.querySelector(`text[data-date="${date}"]`) as HTMLElement;
 
         if (text) {
           text.style.opacity = "1";
         }
       })
       .on("mouseout", (e) => {
-        const value = e.target.getAttribute("data-value");
-        const text = document.querySelector(`text[data-value="${value}"]`) as HTMLElement;
+        const date = e.target.getAttribute("data-date");
+        const text = document.querySelector(`text[data-date="${date}"]`) as HTMLElement;
 
         if (text) {
           text.style.opacity = "0";
@@ -179,10 +180,10 @@ function LinearChart({
       .attr("style", "transform: translate(0, -15px);opacity: 0;font-weight: 700;")
 
       .text((d) => `$${d[1]}`)
-      .attr("data-value", (d) => d[1]);
+      .attr("data-date", (d) => d[0]);
   }
   React.useEffect(() => {
-    const parseTime = d3.timeParse("%d/%m/%Y");
+    const parseTime = d3.timeParse("%m/%d/%Y");
     const formattedData = chartData.map((price) => [
       parseTime(new Date(price.createdAt).toLocaleDateString("en-US")),
       price.value,
@@ -198,6 +199,7 @@ function LinearChart({
       yFormat: "$100.2f",
       marginLeft: 50,
       marginRight: 60,
+      marginTop: 40,
     });
   }, []);
 

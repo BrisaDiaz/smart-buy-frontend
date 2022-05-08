@@ -44,7 +44,38 @@ export default function ProductPage() {
       retry: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
-      onSuccess: (data: {product: TrackedProduct; priceHistory: TrackedPrice[]}) => {
+      onSuccess: (s: {product: TrackedProduct; priceHistory: TrackedPrice[]}) => {
+        const data = {
+          product: {
+            id: "dgOwLccQlU9RlZwAeKWe",
+            title: "Aceite De Girasol Cañuelas 900 Ml ",
+            price: 173.53,
+            market: "disco",
+            image:
+              "https://jumboargentina.vtexassets.com/arquivos/ids/210381-500-auto?v=636383739908430000&width=500&height=auto&aspect=true",
+            link: "https://www.disco.com.ar/aceite-canuelas-de-girasol-x-900-ml/p",
+            createdAt: "2022-04-11T18:34:45.779Z",
+            updatedAt: "2022-05-08T15:01:40.566Z",
+          },
+          priceHistory: [
+            {
+              productId: "dgOwLccQlU9RlZwAeKWe",
+              createdAt: "2022-05-08T15:01:40.566Z",
+              value: 173.53,
+            },
+            {
+              value: 173.53,
+              createdAt: "2022-05-06T13:03:27.679Z",
+              productId: "dgOwLccQlU9RlZwAeKWe",
+            },
+            {
+              createdAt: "2022-04-11T18:34:45.890Z",
+              value: 159.83,
+              productId: "dgOwLccQlU9RlZwAeKWe",
+            },
+          ],
+        };
+
         setPriceHistory(data.priceHistory);
         setProduct(data.product);
       },
