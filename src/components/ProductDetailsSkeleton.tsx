@@ -8,11 +8,11 @@ export default function ProductsDetails({
   product: {
     createdAt?: string;
     updatedAt?: string;
-    price: number;
+    price?: number;
     title: string;
-    image: string;
+    image?: string;
     link: string;
-    market: string;
+    market?: string;
     id?: string;
   };
 }) {
@@ -20,7 +20,14 @@ export default function ProductsDetails({
     <article className="product">
       <div className="product__info">
         <div className="product__header">
-          <p className="product__price"> ${product?.price}</p>
+          {product?.price ? (
+            <p className="product__price"> ${product?.price}</p>
+          ) : (
+            <p className="product__price">
+              $
+              <Skeleton active={true} className="price-skeleton" paragraph={false} title={true} />
+            </p>
+          )}
           <Typography.Title className="product__title" level={1}>
             {product?.title}
           </Typography.Title>
@@ -35,14 +42,22 @@ export default function ProductsDetails({
           />
         </div>
         <a href={product?.link} rel="noreferrer" target="_blank">
-          Ver en {product?.market}
+          Ver en la página del producto
         </a>
         <Skeleton active={true} className="product__meta-skeleton" paragraph={true} title={false} />
       </div>
       <div className="product__img-container">
         <div className="product__img-inner">
-          <img alt={product?.title} className="product__img" src={product?.image} />{" "}
-          <img className="product__market" src={logoTable[product.market]} />
+          {product.image ? (
+            <img alt={product?.title} className="product__img " src={product?.image} />
+          ) : (
+            <Skeleton.Image className="product__img-skeleton " />
+          )}
+          {product?.market ? (
+            <img className="product__market" src={logoTable[product?.market]} />
+          ) : (
+            <Skeleton.Avatar active={true} className="product__market" size="large" />
+          )}
         </div>
       </div>
       <style>{`
@@ -60,11 +75,23 @@ export default function ProductsDetails({
       .product__header{
         margin-bottom: 1.2rem;
       }
-      .product__title{    font-size: 1.125rem !important;    font-weight: 500 !important;margin:0}
+      .product__title{    font-size: 1.125rem !important;    font-weight: 500 !important;margin:0;
+      text-transform:capitalize
+      }
       .product__price{
             font-size: 1.5rem;
             font-weight:700;
             margin:0
+      }
+        .price-skeleton {
+    display: inline-block;
+      width: 80px;
+          margin:0 5px;
+        }
+      .price-skeleton .ant-skeleton-title{
+          width: 80px;
+height: 20px;
+    margin:0;
       }
       .product__meta-skeleton{
         margin-top:1rem;
@@ -104,6 +131,11 @@ width:180px;
    position:relative;
        display: flex;
     align-items: flex-start;
+      }
+      .product__img-skeleton .ant-skeleton-image{
+     width: 200px;
+    height: 200px;
+    margin-right: 10px;
       }
       .product__market{
             

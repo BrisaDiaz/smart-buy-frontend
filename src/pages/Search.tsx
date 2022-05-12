@@ -1,51 +1,51 @@
 import React from "react";
-import {useQuery} from "react-query";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {Typography, Layout, Checkbox, message, Collapse} from "antd";
 import {CheckboxValueType} from "antd/lib/checkbox/Group";
+import {v4 as uuid} from "uuid";
 
-import {generateSearchUrl, getValidSearchParams} from "../utils";
+import {generateSearchUrl} from "../utils";
 import Cart from "../components/svg/Cart";
 import ErrorMessage from "../components/ErrorMessage";
 import ProductSkeleton from "../components/ProductCartSkeleton";
-import {getMarketsProducts} from "../services/market";
+import {useAppSelector} from "../hooks/useStore";
 import ProductCard from "../components/ProductCard";
 import Header from "../components/Header";
 import {Product} from "../interfaces";
 import {MARKET_OPTIONS} from "../constants";
+import {useLazyGetProductsByMarketsQuery} from "../services";
 const {Content} = Layout;
 
 const {Title, Paragraph} = Typography;
 const CheckboxGroup = Checkbox.Group;
 
 function App() {
-  const location = useLocation();
-
   const navigate = useNavigate();
   const [products, setProducts] = React.useState<Product[]>([]);
-  const [marketsCheckedList, setMarketsCheckedList] = React.useState<string[]>([]);
+
   const [isCollapseActive, setIsCollapseActive] = React.useState<boolean>(false);
   const [error, setError] = React.useState<"404" | "500" | "">("");
-  const [search, setSearch] = React.useState<string>("");
 
-  const {refetch, isLoading} = useQuery(
-    ["products", search, marketsCheckedList],
-    () => getMarketsProducts(search, marketsCheckedList),
-    {
-      enabled: false,
-      refetchOnWindowFocus: false,
-      onError: () => {
-        setError("500");
-        setProducts([]);
-      },
-      onSuccess: (data: {total: number; products: Product[]}) => {
-        setProducts(data.products);
+  const [trigger, result] = useLazyGetProductsByMarketsQuery();
+  const marketSearch = useAppSelector((state) => state.marketSearch);
 
-        if (data.total === 0) return setError("404");
-        setError("");
-      },
-    },
-  );
+  React.useEffect(() => {
+    if (result.isError) {
+      setError("500");
+      setProducts([]);
+
+      return;
+    }
+    if (result.isSuccess) {
+      const data: {total: number; products: Product[]} = result.data;
+
+      setProducts(data.products);
+
+      if (data.total === 0) return setError("404");
+      setError("");
+    }
+  }, [result]);
+
   const warning = (content: string) => {
     message.warning(content);
   };
@@ -57,8 +57,7 @@ function App() {
       );
     }
 
-    setMarketsCheckedList(list as string[]);
-    navigate(generateSearchUrl({markets: list as string[]}));
+    navigate(generateSearchUrl({markets: list}));
   };
   const handleCollapse = () => {
     if (window.innerWidth < 1023) {
@@ -71,21 +70,17 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    const {markets, query} = getValidSearchParams();
+    if (!marketSearch.searchQuery || marketSearch.markets.length === 0) return;
 
-    if (search !== query) setSearch(query);
-    if (markets.join("") !== marketsCheckedList.join("")) setMarketsCheckedList(markets);
-  }, [location]);
-
-  React.useEffect(() => {
-    if (!search || marketsCheckedList.length === 0) return;
-
-    refetch();
-  }, [search, marketsCheckedList]);
+    trigger({
+      searchQuery: marketSearch.searchQuery,
+      markets: marketSearch.markets,
+    });
+  }, [marketSearch]);
 
   return (
     <Layout className="page">
-      <Header loading={isLoading} />
+      <Header loading={result.isFetching} />
       <section>
         <Content className="content">
           <div onClick={handleCollapse}>
@@ -100,22 +95,22 @@ function App() {
                 header="En donde deseas consultar?"
               >
                 <CheckboxGroup
+                  defaultValue={marketSearch.markets}
                   options={MARKET_OPTIONS}
-                  value={marketsCheckedList}
                   onChange={onMarketSelectChange}
                 />
               </Collapse.Panel>
             </Collapse>
           </div>
-          {!isLoading && !error && products.length === 0 && (
+          {!result.isFetching && !error && products.length === 0 && (
             <section className="cart__illustration">
               <Cart />
             </section>
           )}
-          {isLoading && products.length === 0 && (
+          {result.isFetching && products.length === 0 && (
             <section className="search__results">
               <div className="search__meta">
-                <Title level={1}>{search}</Title>
+                <Title level={1}>{marketSearch.searchQuery}</Title>
                 <Paragraph type="secondary">Cosas buenas necesitan tiempo...</Paragraph>
               </div>
               <section className="products__grind skeleton__grid">
@@ -126,13 +121,13 @@ function App() {
             </section>
           )}
 
-          {error && !isLoading && <ErrorMessage status={error} />}
+          {error && !result.isFetching && <ErrorMessage status={error} />}
 
           {products.length > 0 && !error && (
             <section className="search__results">
               <div className="search__meta">
-                <Title level={1}>{search}</Title>
-                {isLoading ? (
+                <Title level={1}>{marketSearch.searchQuery}</Title>
+                {result.isFetching ? (
                   <Paragraph type="secondary">Cosas buenas necesitan tiempo...</Paragraph>
                 ) : (
                   <Paragraph type="secondary">{products.length} resultados</Paragraph>
@@ -140,7 +135,7 @@ function App() {
               </div>
               <section className="products__grind">
                 {products.map((product) => (
-                  <ProductCard key={product.link} product={product} />
+                  <ProductCard key={uuid()} product={product} />
                 ))}
               </section>
             </section>

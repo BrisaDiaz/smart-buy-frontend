@@ -1,3 +1,4 @@
+import {Market} from "../interfaces";
 import veaLogo from "../public/vea-logo.png";
 // import carrefourLogo from "../public/carrefour-logo.png";
 import hiperlibertadLogo from "../public/hiperlibertad-logo.png";
@@ -9,7 +10,7 @@ import supermamiLogo from "../public/super-mami-logo.png";
 import diaLogo from "../public/dia-logo.png";
 import maxiconsumoLogo from "../public/maxiconsumo-logo.png";
 import laAnonimaLogo from "../public/la-anonima-logo.png";
-export const MARKET_OPTIONS = [
+export const MARKET_OPTIONS: Market[] = [
   // "carrefour",
   "cordiez",
   "coto",
@@ -37,4 +38,4 @@ export const logoTable: {[key: string]: string} = {
   "super mami": supermamiLogo,
 };
 
-export const API_BASE_PATH = import.meta.env.VITE_API_BASE_PATH;
+export const API_BASE_PATH = import.meta.env.VITE_API_BASE_PATH || "http://localhost:4000";

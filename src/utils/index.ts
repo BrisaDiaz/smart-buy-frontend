@@ -1,12 +1,14 @@
 import {MARKET_OPTIONS} from "../constants";
-import {Product} from "../interfaces";
+import {Product, Market} from "../interfaces";
 
-export const generateSearchUrl = ({search, markets}: {search?: string; markets?: string[]}) => {
+export const generateSearchUrl = ({search, markets}: {search?: string; markets?: any[]}) => {
   const params = new URLSearchParams(new URL(window.location.toString().replace("/#", "")).search);
 
   const searchQuery = search || params.get("query");
   const marketsQuery = markets || [
-    ...new Set(params.getAll("market").filter((market) => MARKET_OPTIONS.includes(market))),
+    ...new Set(
+      params.getAll("market").filter((market) => MARKET_OPTIONS.includes(market as Market)),
+    ),
   ];
 
   const query = new URLSearchParams();
@@ -40,22 +42,31 @@ export const generateProductUrl = (product: Product) => {
   const slug = product.title.trim().toLowerCase().replaceAll(" ", "-");
   const query = new URLSearchParams();
 
-  Object.entries(product).forEach((entry) => query.append(entry[0], entry[1]));
+  query.append("link", product.link);
   const url = `/product/${slug}?${query.toString()}`;
 
   return url;
 };
-export const extractProductDataFromParams = (searchParams: string) => {
-  const query = new URLSearchParams(searchParams);
-  const product = {
-    title: query.get("title"),
-    market: query.get("market"),
-    link: query.get("link"),
-    image: query.get("image"),
-    price: parseInt(query.get("price") || "0"),
+
+export const fixStringNumber = (number: string) => {
+  const units: {[key: number]: number} = {
+    1: 10,
+    2: 100,
+    3: 1000,
+    4: 10000,
   };
+  const isEsFormat = number.indexOf(",");
+  let integer, decimal;
 
-  if (!Object.values(product).every((prop) => Boolean(prop))) return undefined;
+  if (isEsFormat !== -1) {
+    [integer, decimal] = number.split(",");
+  } else {
+    [integer, decimal] = number.split(".");
+  }
 
-  return product;
+  if (!decimal) return parseInt(integer);
+
+  const fixedNumber = Math.floor(parseInt(integer)) + parseInt(decimal) / units[decimal.length];
+
+  return fixedNumber;
 };

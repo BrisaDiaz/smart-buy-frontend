@@ -1,20 +1,32 @@
 import React from "react";
 import {useLocation, useNavigate, Link} from "react-router-dom";
-import {useQuery, useMutation} from "react-query";
 import {Breadcrumb, message} from "antd";
 
-import {extractProductDataFromParams} from "../utils";
 import ProductsDetails from "../components/ProductDetails";
 import ProductDetailsSkeleton from "../components/ProductDetailsSkeleton";
-import {getTrackedProduct, createProductRecord} from "../services/tracker";
-import {TrackedProduct, TrackedPrice, Product} from "../interfaces";
+import {
+  useCreateTrackingProductRecordMutation,
+  useUpdateTrackingProductPriceMutation,
+} from "../services/index";
+import {TrackedPrice, Product} from "../interfaces";
 import Header from "../components/Header";
 import LinearChart from "../components/LinearChart";
+
+interface PartialProduct {
+  createdAt?: string;
+  updatedAt?: string;
+  price?: number;
+  title: string;
+  image?: string;
+  link: string;
+  market?: string;
+  id?: string;
+}
 export default function ProductPage() {
   const location = useLocation();
-  const statedProduct =
-    (location.state as Product | null) ||
-    (extractProductDataFromParams(location.search) as Product | undefined);
+
+  const statedProduct = location.state as Product | null;
+
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -24,92 +36,59 @@ export default function ProductPage() {
     if (type === "success") return message.success(content);
     message.error(content);
   };
-  const [product, setProduct] = React.useState<{
-    createdAt?: string;
-    updatedAt?: string;
-    price: number;
-    title: string;
-    image: string;
-    link: string;
-    market: string;
-    id?: string;
-  } | null>((statedProduct as Product) || null);
-  const [priceHistory, setPriceHistory] = React.useState<
-    {createdAt: string; value: number; productId: string}[]
-  >([]);
-  const trackedProductRequest = useQuery(
-    ["product", statedProduct ? statedProduct?.link : "", statedProduct ? statedProduct?.price : 0],
-    () => getTrackedProduct(statedProduct?.link || "", statedProduct?.price || 0),
-    {
-      retry: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      onSuccess: (s: {product: TrackedProduct; priceHistory: TrackedPrice[]}) => {
-        const data = {
-          product: {
-            id: "dgOwLccQlU9RlZwAeKWe",
-            title: "Aceite De Girasol Cañuelas 900 Ml ",
-            price: 173.53,
-            market: "disco",
-            image:
-              "https://jumboargentina.vtexassets.com/arquivos/ids/210381-500-auto?v=636383739908430000&width=500&height=auto&aspect=true",
-            link: "https://www.disco.com.ar/aceite-canuelas-de-girasol-x-900-ml/p",
-            createdAt: "2022-04-11T18:34:45.779Z",
-            updatedAt: "2022-05-08T15:01:40.566Z",
-          },
-          priceHistory: [
-            {
-              productId: "dgOwLccQlU9RlZwAeKWe",
-              createdAt: "2022-05-08T15:01:40.566Z",
-              value: 173.53,
-            },
-            {
-              value: 173.53,
-              createdAt: "2022-05-06T13:03:27.679Z",
-              productId: "dgOwLccQlU9RlZwAeKWe",
-            },
-            {
-              createdAt: "2022-04-11T18:34:45.890Z",
-              value: 159.83,
-              productId: "dgOwLccQlU9RlZwAeKWe",
-            },
-          ],
-        };
 
-        setPriceHistory(data.priceHistory);
-        setProduct(data.product);
-      },
-    },
-  );
-  const createRecordRequest = useMutation(
-    () =>
-      createProductRecord(
-        product as {
-          price: number;
-          title: string;
-          image: string;
-          link: string;
-          market: string;
-        },
-      ),
-    {
-      onSuccess: (productRecord) => {
-        setProduct(productRecord);
-        notification("success", "Se ha inizializado el seguiminto de precios de forma exitosa");
-      },
-      onError: () => {
-        notification(
-          "error",
-          "Devido a un error no se ha podido inizializar el seguiminto de precios",
-        );
-      },
-    },
+  const [product, setProduct] = React.useState<PartialProduct | null>(
+    statedProduct as PartialProduct,
   );
 
+  const [priceHistory, setPriceHistory] = React.useState<TrackedPrice[]>([]);
+
+  const [createTrackingRecord, createTrackingRecordResult] =
+    useCreateTrackingProductRecordMutation();
+
+  const [updateProductPrice, updatePriceResult] = useUpdateTrackingProductPriceMutation();
   const handleInitTracking = async () => {
-    await createRecordRequest.mutate();
+    await createTrackingRecord(product as Product);
+  };
+  const handleUpdatePrice = async (args: {price?: number; link: string}) => {
+    await updateProductPrice(args);
   };
 
+  React.useEffect(() => {
+    if (createTrackingRecordResult.data) {
+      setProduct(createTrackingRecordResult.data);
+
+      return notification(
+        "success",
+        "Se ha inizializado el seguiminto de precios de forma exitosa",
+      );
+    }
+    if (createTrackingRecordResult.isError) {
+      notification(
+        "error",
+        "Devido a un error no se ha podido inizializar el seguiminto de precios",
+      );
+    }
+  }, [createTrackingRecordResult]);
+
+  React.useEffect(() => {
+    if (updatePriceResult.data) {
+      notification("success", "El historial de precios ha sido correctamente validado");
+    }
+  }, [updatePriceResult.data]);
+  React.useEffect(() => {
+    if (!statedProduct) return;
+    handleUpdatePrice({
+      price: statedProduct?.price,
+      link: statedProduct.link,
+    });
+  }, []);
+  React.useEffect(() => {
+    if (updatePriceResult.data) {
+      setPriceHistory(updatePriceResult.data.priceHistory);
+      setProduct(updatePriceResult.data.product);
+    }
+  }, [updatePriceResult]);
   function getPriceVariation(currentPrice: number, priceHistory: TrackedPrice[]) {
     const lastVariation =
       priceHistory.find((price) => price.value !== currentPrice)?.value || currentPrice;
@@ -122,7 +101,7 @@ export default function ProductPage() {
   }
   const priceVariation =
     priceHistory.length > 1
-      ? getPriceVariation(product?.price as number, priceHistory)
+      ? getPriceVariation(priceHistory[0].value, priceHistory)
       : {trend: "increase", value: 0};
 
   if (!statedProduct) return <div />;
@@ -149,16 +128,18 @@ export default function ProductPage() {
               Search
             </Link>
           </Breadcrumb.Item>
-          <Breadcrumb.Item>{product?.title}</Breadcrumb.Item>
+          <Breadcrumb.Item className="breadcrumb">{statedProduct?.title}</Breadcrumb.Item>
         </Breadcrumb>
-        {product && !trackedProductRequest.isLoading && (
+        {product && !updatePriceResult.isLoading && (
           <ProductsDetails
-            loading={createRecordRequest.isLoading}
-            product={product}
+            loading={createTrackingRecordResult.isLoading}
+            product={product as Product}
             onTrack={handleInitTracking}
           />
         )}
-        {product && trackedProductRequest.isLoading && <ProductDetailsSkeleton product={product} />}
+        {statedProduct && updatePriceResult.isLoading && (
+          <ProductDetailsSkeleton product={statedProduct} />
+        )}
         {priceHistory.length > 0 && (
           <section>
             <div className="chart__summary">
@@ -188,6 +169,9 @@ export default function ProductPage() {
           </section>
         )}
         <style>{`
+        .breadcrumb{
+          text-transform:capitalize !important
+        }
            .page{
      
     padding:  1rem 2rem;

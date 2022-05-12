@@ -38,7 +38,7 @@ export default function ProductsDetails({
           <p className={`product__state`}>{product?.id ? "Activo" : "Untracked"}</p>
         </div>
         <a href={product?.link} rel="noreferrer" target="_blank">
-          Ver en {product?.market}
+          Ver producto en {product?.market}
         </a>
         {product?.createdAt && product?.updatedAt ? (
           <>

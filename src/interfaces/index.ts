@@ -1,9 +1,20 @@
+export type Market =
+  | "cordiez"
+  | "coto"
+  | "dia"
+  | "disco"
+  | "hiperlibertad"
+  | "jumbo"
+  | "la anonima online"
+  | "maxiconsumo"
+  | "super mami"
+  | "vea";
 export interface Product {
   price: number;
   title: string;
   image: string;
   link: string;
-  market: string;
+  market: Market;
 }
 export interface TrackedProduct {
   id: string;
@@ -11,7 +22,7 @@ export interface TrackedProduct {
   price: number;
   image: string;
   link: string;
-  market: string;
+  market: Market;
   createdAt: string;
   updatedAt: string;
 }
