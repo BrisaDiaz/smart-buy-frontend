@@ -21,7 +21,7 @@ export const marketsScraperApi = createApi({
 
         return `/api/v1/market/search?${query.toString()}`;
       },
-      providesTags: (result, error, arg) =>
+      providesTags: (result) =>
         result
           ? result.products.map((product) => ({
               type: "Product",
@@ -41,7 +41,7 @@ export const marketsScraperApi = createApi({
       query: (link) => {
         return API_BASE_PATH + `/api/v1/tracker/products?link=${link}`;
       },
-      providesTags: (result, error, arg) =>
+      providesTags: (result) =>
         result
           ? [
               {

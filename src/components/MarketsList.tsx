@@ -14,7 +14,7 @@ export default function MarketsList() {
   return (
     <>
       <section>
-        <div className="markets__list">
+        <div className="markets__list ">
           <img alt="vea" className="market__logo" src={veaLogo} />
           {/* <img alt="carrefour" className="market__logo" src={carrefourLogo} /> */}
           <img alt="la anonima online" className="market__logo" src={laAnonimaLogo} />
@@ -35,7 +35,8 @@ export default function MarketsList() {
         margin-top:auto;
         pointer-events: none;
         display: flex;
-         
+           animation: slide-top 1s cubic-bezier(0.250, 0.460, 0.450, 0.940)  both;
+           animation-delay:0.5s;
     flex-wrap: wrap;
     gap: 1rem;
     justify-content: space-around;

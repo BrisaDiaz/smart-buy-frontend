@@ -2,9 +2,10 @@ import {Typography, Layout, Button} from "antd";
 import {Link} from "react-router-dom";
 
 import MarketsList from "../components/MarketsList";
+import Header from "../components/Header";
 
 import illustration from "./../public/illustration.jpg";
-import Header from "./../components/Header";
+
 const {Content} = Layout;
 const {Title} = Typography;
 
@@ -45,6 +46,8 @@ function App() {
     justify-content: center;
       }
           .content{
+                width: 100%;
+
     height: auto;
         max-width: 1250px;
         margin: 0 auto;
@@ -54,7 +57,15 @@ function App() {
     flex-direction: column;
     justify-content: center;
       }
-  
+     .illustration__section{
+         min-height: 440px;
+           margin:1rem 0 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+       padding: 0;
+}
+
       .illustration__section__text{
 
     float: left;
@@ -71,13 +82,6 @@ function App() {
     margin: 1em 0;
     font-size: 1.5rem
    }
-   .illustration__section{
-           margin:1rem 0 1.5rem;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-       padding: 0;
-}
 
 .action-bottom{
       margin-top: 2rem;
@@ -92,8 +96,8 @@ function App() {
 }
     .illustration{
        height: max-content;
-         
-
+         background-image:url(${illustration});
+ animation: slide-left 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
     max-width: 590px;
     margin: 0 auto;
     display: flex;

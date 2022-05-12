@@ -99,6 +99,28 @@ z-index: 10;
     padding: 6.5px 11px 6.5px 15px;
 
 }
+@keyframes slide-top {
+  0% {
+ opacity:0;
+            transform: translateY(150px);
+  }
+  100% {
+  opacity:1;
+            transform: translateY(0);
+  }
+}
+@keyframes slide-left {
+  0% {
+ opacity:0;
+            transform: translateX(50vw);
+  }
+  100% {
+ opacity:1;
+            transform: translateX(0);
+  }
+}
+
+
 @media(min-width:500px){
 .logo{
     width: auto;
