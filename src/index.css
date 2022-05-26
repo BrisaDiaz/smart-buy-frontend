@@ -23,7 +23,12 @@ code {
   --primary-dark:#e79f39;
     --primary:#EBB054;
     --primary-light:#FEE4BD;
-
+    --primary-20:rgb(255 193 7 / 20%);
+--antd-wave-shadow-color: #EBB054;
+}
+::selection {
+ 
+    background: var(--primary)
 }
 a{
     color: inherit;
@@ -47,9 +52,7 @@ border-color: var(--primary-dark);
 .ant-input-search .ant-input:hover, .ant-input-search .ant-input:focus,.ant-checkbox-wrapper:hover .ant-checkbox-inner, .ant-checkbox:hover .ant-checkbox-inner, .ant-checkbox-input:focus + .ant-checkbox-inner,.ant-checkbox-checked::after{
   border-color: var(--primary);
 }
-::selection,.ant-checkbox-indeterminate .ant-checkbox-inner::after{
-  background: var(--primary);
-}
+
 .ant-checkbox-group{
   display: flex;
     flex-wrap: wrap;
@@ -98,6 +101,12 @@ z-index: 10;
     border-radius: 30px;
     padding: 6.5px 11px 6.5px 15px;
 
+}
+.ant-input:focus, .ant-input-focused {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-20);
+    border-right-width: 1px;
+    outline: 0;
 }
 @keyframes slide-top {
   0% {
