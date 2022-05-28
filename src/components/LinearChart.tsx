@@ -1,5 +1,7 @@
 import * as d3 from "d3";
 import React from "react";
+
+import {ES_LOCALS} from "../constants";
 type ChartData = [number, number];
 function LinearChart({
   chartData,
@@ -183,9 +185,10 @@ function LinearChart({
       .attr("data-date", (d) => d[0]);
   }
   React.useEffect(() => {
-    const parseTime = d3.timeParse("%m/%d/%Y");
+    d3.timeFormatDefaultLocale(ES_LOCALS as any);
+    const parseTime = d3.timeParse("%d/%m/%Y");
     const formattedData = chartData.map((price) => [
-      parseTime(new Date(price.createdAt).toLocaleDateString("en-US")),
+      parseTime(new Date(price.createdAt).toLocaleDateString("es-ES")),
       price.value,
     ]);
 
