@@ -89,7 +89,7 @@ export default function ProductPage() {
       setProduct(updatePriceResult.data.product);
     }
   }, [updatePriceResult]);
-  console.log(updatePriceResult.data);
+
   function getPriceVariation(currentPrice: number, priceHistory: TrackedPrice[]) {
     const lastVariation =
       priceHistory.find((price) => price.value !== currentPrice)?.value || currentPrice;
