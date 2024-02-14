@@ -98,6 +98,8 @@ function App() {
        height: max-content;
          background-image:url(${illustration});
  animation: slide-left 1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    width: 100%;
+    min-width: 250px;
     max-width: 590px;
     margin: 0 auto;
     display: flex;
