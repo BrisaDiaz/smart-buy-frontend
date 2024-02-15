@@ -1,6 +1,6 @@
-import {Typography, Button} from "antd";
+import {Typography, Button} from 'antd';
 
-import {logoTable} from "../constants";
+import {logoTable} from '../constants';
 
 export default function ProductsDetails({
   product,
@@ -32,10 +32,10 @@ export default function ProductsDetails({
         <div className="product__state-container">
           <div
             className={`product__state-color ${
-              product?.id ? "product__state-color--active" : "product__state-color--inactive"
+              product?.id ? 'product__state-color--active' : 'product__state-color--inactive'
             }`}
-          />{" "}
-          <p className={`product__state`}>{product?.id ? "Activo" : "Untracked"}</p>
+          />{' '}
+          <p className={`product__state`}>{product?.id ? 'Activo' : 'Untracked'}</p>
         </div>
         <a href={product?.link} rel="noreferrer" target="_blank">
           Ver producto en {product?.market}
@@ -44,7 +44,7 @@ export default function ProductsDetails({
           <>
             <p>Trackeado el {new Date(product?.createdAt).toLocaleDateString()}</p>
             <p>
-              Última actualización {new Date(product?.updatedAt).toLocaleDateString()} a las{" "}
+              Última actualización {new Date(product?.updatedAt).toLocaleDateString()} a las{' '}
               {new Date(product?.updatedAt).toLocaleTimeString()}
             </p>
           </>
@@ -63,7 +63,7 @@ export default function ProductsDetails({
       </div>
       <div className="product__img-container">
         <div className="product__img-inner">
-          <img alt={product?.title} className="product__img" src={product?.image} />{" "}
+          <img alt={product?.title} className="product__img" src={product?.image} />{' '}
           <img className="product__market" src={logoTable[product.market]} />
         </div>
       </div>

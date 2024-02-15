@@ -1,16 +1,16 @@
-import React from "react";
-import {useLocation, useNavigate, Link} from "react-router-dom";
-import {Breadcrumb, message} from "antd";
+import React from 'react';
+import {useLocation, useNavigate, Link} from 'react-router-dom';
+import {Breadcrumb, message} from 'antd';
 
-import ProductsDetails from "../components/ProductDetails";
-import ProductDetailsSkeleton from "../components/ProductDetailsSkeleton";
+import ProductsDetails from '../components/ProductDetails';
+import ProductDetailsSkeleton from '../components/ProductDetailsSkeleton';
 import {
   useCreateTrackingProductRecordMutation,
   useUpdateTrackingProductPriceMutation,
-} from "../services/index";
-import {TrackedPrice, Product} from "../interfaces";
-import Header from "../components/Header";
-import LinearChart from "../components/LinearChart";
+} from '../services/index';
+import {TrackedPrice, Product} from '../interfaces';
+import Header from '../components/Header';
+import LinearChart from '../components/LinearChart';
 
 interface PartialProduct {
   createdAt?: string;
@@ -30,10 +30,10 @@ export default function ProductPage() {
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    if (!statedProduct) return navigate("/404", {replace: true});
+    if (!statedProduct) return navigate('/404', {replace: true});
   }, []);
-  const notification = (type: "success" | "error", content: string) => {
-    if (type === "success") return message.success(content);
+  const notification = (type: 'success' | 'error', content: string) => {
+    if (type === 'success') return message.success(content);
     message.error(content);
   };
 
@@ -59,21 +59,21 @@ export default function ProductPage() {
       setProduct(createTrackingRecordResult.data);
 
       return notification(
-        "success",
-        "Se ha inizializado el seguiminto de precios de forma exitosa",
+        'success',
+        'Se ha inizializado el seguiminto de precios de forma exitosa',
       );
     }
     if (createTrackingRecordResult.isError) {
       notification(
-        "error",
-        "Devido a un error no se ha podido inizializar el seguiminto de precios",
+        'error',
+        'Devido a un error no se ha podido inizializar el seguiminto de precios',
       );
     }
   }, [createTrackingRecordResult]);
 
   React.useEffect(() => {
     if (updatePriceResult.data) {
-      notification("success", "El historial de precios ha sido correctamente validado");
+      notification('success', 'El historial de precios ha sido correctamente validado');
     }
   }, [updatePriceResult.data]);
   React.useEffect(() => {
@@ -96,20 +96,20 @@ export default function ProductPage() {
     const difference = currentPrice - lastVariation;
 
     return {
-      trend: difference === 0 ? "equal" : difference > 0 ? "increase" : "decrease",
+      trend: difference === 0 ? 'equal' : difference > 0 ? 'increase' : 'decrease',
       value: Math.abs(difference).toFixed(2),
     };
   }
   const priceVariation =
     priceHistory.length > 1
       ? getPriceVariation(priceHistory[0].value, priceHistory)
-      : {trend: "increase", value: 0};
+      : {trend: 'increase', value: 0};
 
   if (!statedProduct) return <div />;
 
   return (
     <>
-      {" "}
+      {' '}
       <Header />
       <main className="page">
         <Breadcrumb>
@@ -125,7 +125,7 @@ export default function ProductPage() {
                 navigate(-1);
               }}
             >
-              {" "}
+              {' '}
               Search
             </Link>
           </Breadcrumb.Item>
@@ -148,16 +148,16 @@ export default function ProductPage() {
                 <p>No sea ha detectado una variación de precio</p>
               ) : (
                 <p>
-                  En la última variación el precio{" "}
+                  En la última variación el precio{' '}
                   <span
                     className={`price__trend ${
-                      priceVariation.trend === "increase"
-                        ? "price__trend--increase"
-                        : "price__trend--decrease"
+                      priceVariation.trend === 'increase'
+                        ? 'price__trend--increase'
+                        : 'price__trend--decrease'
                     }`}
                   >
-                    {priceVariation.trend === "increase" ? "subió" : "bajó"}
-                  </span>{" "}
+                    {priceVariation.trend === 'increase' ? 'subió' : 'bajó'}
+                  </span>{' '}
                   <strong>${priceVariation.value} </strong> con respecto al anterior.
                 </p>
               )}
@@ -170,43 +170,36 @@ export default function ProductPage() {
           </section>
         )}
         <style>{`
-        .breadcrumb{
-          text-transform:capitalize !important
-        }
-           .page{
-     
-    padding:  1rem 2rem;
-    max-width: 1250px;
-    width: 100%;
-    margin: 0 auto ;
-      }
-   
-      .chart__container{
-overflow-x: auto;
-
-      }
-      .chart__summary{
-    
-        padding:1rem 0;
-        font-size: 15px;
-    font-weight: 500;
-      }
-       .chart__inner{
-    min-width:800px;
-
-      }
-      .price__trend{
-text-decoration: 2px solid underline;
-    text-underline-offset: 2px;
-  
-      }
-      .price__trend--increase{
-  text-decoration-color:  #f44336;
-      }
-      .price__trend--decrease{
-  text-decoration-color:#009688;
-      }
-
+ .breadcrumb{
+     text-transform:capitalize !important;
+}
+ .page{
+     padding: 1rem 2rem;
+     max-width: 1250px;
+     width: 100%;
+     margin: 0 auto ;
+}
+ .chart__container{
+     overflow-x: auto;
+}
+ .chart__summary{
+     padding:1rem 0;
+     font-size: 15px;
+     font-weight: 500;
+}
+ .chart__inner{
+     min-width:800px;
+}
+ .price__trend{
+     text-decoration: 2px solid underline;
+     text-underline-offset: 2px;
+}
+ .price__trend--increase{
+     text-decoration-color: #f44336;
+}
+ .price__trend--decrease{
+     text-decoration-color:#009688;
+}
       `}</style>
       </main>
     </>

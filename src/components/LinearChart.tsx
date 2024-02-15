@@ -1,7 +1,7 @@
-import * as d3 from "d3";
-import React from "react";
+import * as d3 from 'd3';
+import React from 'react';
 
-import {ES_LOCALS} from "../constants";
+import {ES_LOCALS} from '../constants';
 type ChartData = [number, number];
 function LinearChart({
   chartData,
@@ -31,9 +31,9 @@ function LinearChart({
       yRange = [height - marginBottom, marginTop], // [bottom, top]
       yFormat, // a format specifier string for the y-axis
       yLabel, // a label for the y-axis
-      color = "currentColor", // stroke color of line
-      strokeLinecap = "round", // stroke line cap of the line
-      strokeLinejoin = "round", // stroke line join of the line
+      color = 'currentColor', // stroke color of line
+      strokeLinecap = 'round', // stroke line cap of the line
+      strokeLinejoin = 'round', // stroke line join of the line
       strokeWidth = 2, // stroke width of line, in pixels
       strokeOpacity = 1, // stroke opacity of line
     }: any = {},
@@ -72,60 +72,60 @@ function LinearChart({
 
     const svg = d3
       .select(svgRef.current)
-      .attr("width", width)
-      .attr("height", height)
-      .attr("viewBox", [0, 0, width, height])
+      .attr('width', width)
+      .attr('height', height)
+      .attr('viewBox', [0, 0, width, height])
       .attr(
-        "style",
-        "max-width: 100%; height: auto; height: intrinsic;overflow: visible;padding-top: 20px;",
+        'style',
+        'max-width: 100%; height: auto; height: intrinsic;overflow: visible;padding-top: 20px;',
       );
 
     svg
-      .append("g")
-      .attr("transform", `translate(0,${height - marginBottom})`)
+      .append('g')
+      .attr('transform', `translate(0,${height - marginBottom})`)
       .call(xAxis);
 
     svg
-      .append("g")
-      .attr("transform", `translate(${marginLeft},0)`)
+      .append('g')
+      .attr('transform', `translate(${marginLeft},0)`)
       .call(yAxis)
-      .call((g: any) => g.select(".domain").remove())
+      .call((g: any) => g.select('.domain').remove())
       .call((g: any) =>
         g
-          .selectAll(".tick line")
+          .selectAll('.tick line')
           .clone()
-          .attr("x2", width - marginLeft - marginRight)
-          .attr("stroke-opacity", 0.1),
+          .attr('x2', width - marginLeft - marginRight)
+          .attr('stroke-opacity', 0.1),
       )
       .call((g: any) =>
         g
-          .append("text")
-          .attr("x", -marginLeft)
-          .attr("y", 10)
-          .attr("fill", "currentColor")
-          .attr("text-anchor", "start")
+          .append('text')
+          .attr('x', -marginLeft)
+          .attr('y', 10)
+          .attr('fill', 'currentColor')
+          .attr('text-anchor', 'start')
           .text(yLabel)
-          .attr("style", "transform: translate(0rem,-1em);font-size: 14px;opacity: 0.8;"),
+          .attr('style', 'transform: translate(0rem,-1em);font-size: 14px;opacity: 0.8;'),
       );
 
     svg
-      .append("path")
-      .attr("fill", "none")
-      .attr("stroke", color)
-      .attr("stroke-width", strokeWidth)
-      .attr("stroke-linecap", strokeLinecap)
-      .attr("stroke-linejoin", strokeLinejoin)
-      .attr("stroke-opacity", strokeOpacity)
-      .attr("d", line(I as any));
+      .append('path')
+      .attr('fill', 'none')
+      .attr('stroke', color)
+      .attr('stroke-width', strokeWidth)
+      .attr('stroke-linecap', strokeLinecap)
+      .attr('stroke-linejoin', strokeLinejoin)
+      .attr('stroke-opacity', strokeOpacity)
+      .attr('d', line(I as any));
     // Add the area
     svg
-      .append("path")
+      .append('path')
       .datum(data)
-      .attr("fill", color)
-      .attr("fill-opacity", 0.2)
-      .attr("stroke", "none")
+      .attr('fill', color)
+      .attr('fill-opacity', 0.2)
+      .attr('stroke', 'none')
       .attr(
-        "d",
+        'd',
         d3
           .area()
           .x((d: ChartData) => xScale(d[0]))
@@ -133,62 +133,62 @@ function LinearChart({
           .y1((d) => yScale(d[1])),
       );
     svg
-      .selectAll("myCircles")
+      .selectAll('myCircles')
       .data(data)
       .enter()
-      .append("circle")
-      .attr("fill", "#f44336")
-      .attr("stroke", "none")
-      .attr("cx", function (d) {
+      .append('circle')
+      .attr('fill', '#f44336')
+      .attr('stroke', 'none')
+      .attr('cx', function (d) {
         return xScale(d[0]);
       })
-      .attr("cy", function (d) {
+      .attr('cy', function (d) {
         return yScale(d[1]);
       })
-      .attr("r", 3)
-      .attr("style", "cursor: pointer;")
+      .attr('r', 3)
+      .attr('style', 'cursor: pointer;')
 
-      .attr("data-date", (d) => d[0])
-      .on("mouseover", (e) => {
-        const date = e.target.getAttribute("data-date");
+      .attr('data-date', (d) => d[0])
+      .on('mouseover', (e) => {
+        const date = e.target.getAttribute('data-date');
         const text = document.querySelector(`text[data-date="${date}"]`) as HTMLElement;
 
         if (text) {
-          text.style.opacity = "1";
+          text.style.opacity = '1';
         }
       })
-      .on("mouseout", (e) => {
-        const date = e.target.getAttribute("data-date");
+      .on('mouseout', (e) => {
+        const date = e.target.getAttribute('data-date');
         const text = document.querySelector(`text[data-date="${date}"]`) as HTMLElement;
 
         if (text) {
-          text.style.opacity = "0";
+          text.style.opacity = '0';
         }
       });
 
     svg
-      .selectAll("myCircles")
+      .selectAll('myCircles')
       .data(data)
       .enter()
-      .append("text")
-      .attr("x", function (d) {
+      .append('text')
+      .attr('x', function (d) {
         return xScale(d[0]);
       })
-      .attr("y", function (d) {
+      .attr('y', function (d) {
         return yScale(d[1]);
       })
-      .attr("text-anchor", "right")
-      .attr("fill", "currentColor")
-      .attr("style", "transform: translate(0, -15px);opacity: 0;font-weight: 700;")
+      .attr('text-anchor', 'right')
+      .attr('fill', 'currentColor')
+      .attr('style', 'transform: translate(0, -15px);opacity: 0;font-weight: 700;')
 
       .text((d) => `$${d[1]}`)
-      .attr("data-date", (d) => d[0]);
+      .attr('data-date', (d) => d[0]);
   }
   React.useEffect(() => {
     d3.timeFormatDefaultLocale(ES_LOCALS as any);
-    const parseTime = d3.timeParse("%d/%m/%Y");
+    const parseTime = d3.timeParse('%d/%m/%Y');
     const formattedData = chartData.map((price) => [
-      parseTime(new Date(price.createdAt).toLocaleDateString("es-ES")),
+      parseTime(new Date(price.createdAt).toLocaleDateString('es-ES')),
       price.value,
     ]);
 
@@ -198,8 +198,8 @@ function LinearChart({
       yLabel: `Registros (${formattedData.length})`,
       width: 1250,
       height: 500,
-      color: "var(--secondary)",
-      yFormat: "$100.2f",
+      color: 'var(--secondary)',
+      yFormat: '$100.2f',
       marginLeft: 50,
       marginRight: 60,
       marginTop: 40,

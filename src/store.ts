@@ -1,8 +1,8 @@
-import {configureStore} from "@reduxjs/toolkit";
-import {setupListeners} from "@reduxjs/toolkit/query";
+import {configureStore} from '@reduxjs/toolkit';
+import {setupListeners} from '@reduxjs/toolkit/query';
 
-import {marketSlice} from "./features/market/marketSlice";
-import {marketsScraperApi} from "./services";
+import {marketSlice} from './features/market/marketSlice';
+import {marketsScraperApi} from './services';
 export const store = configureStore({
   reducer: {
     marketSearch: marketSlice.reducer,

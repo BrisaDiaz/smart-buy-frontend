@@ -1,6 +1,6 @@
-import {Typography, Skeleton} from "antd";
+import {Typography, Skeleton} from 'antd';
 
-import {logoTable} from "../constants";
+import {logoTable} from '../constants';
 
 export default function ProductsDetails({
   product,
@@ -33,7 +33,7 @@ export default function ProductsDetails({
           </Typography.Title>
         </div>
         <div className="product__state-container">
-          <div className={`product__state-color `} />{" "}
+          <div className={`product__state-color `} />{' '}
           <Skeleton
             active={true}
             className="product__state-skeleton"

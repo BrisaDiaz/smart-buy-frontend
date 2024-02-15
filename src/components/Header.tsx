@@ -1,8 +1,8 @@
-import {Layout, Input} from "antd";
-import {useNavigate, useSearchParams} from "react-router-dom";
+import {Layout, Input} from 'antd';
+import {useNavigate, useSearchParams} from 'react-router-dom';
 
-import {generateSearchUrl} from "../utils";
-import logo from "../public/logo.png";
+import {generateSearchUrl} from '../utils';
+import logo from '../public/logo.png';
 export default function Header({loading}: {loading?: boolean}) {
   const navigate = useNavigate();
   const handleSearch = (search: string) => {
@@ -21,7 +21,7 @@ export default function Header({loading}: {loading?: boolean}) {
           <Input.Search
             enterButton
             className="search-bar"
-            defaultValue={params.get("query") || ""}
+            defaultValue={params.get('query') || ''}
             loading={loading || false}
             placeholder="Buscar producto"
             size="large"

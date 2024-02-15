@@ -1,9 +1,9 @@
-import {Tooltip, Card, Avatar} from "antd";
-import {Link} from "react-router-dom";
+import {Tooltip, Card, Avatar} from 'antd';
+import {Link} from 'react-router-dom';
 
-import {generateProductUrl} from "../utils";
-import {Product} from "../interfaces";
-import {logoTable} from "../constants";
+import {generateProductUrl} from '../utils';
+import {Product} from '../interfaces';
+import {logoTable} from '../constants';
 export default function ProductCard({product}: {product: Product}) {
   return (
     <>
@@ -21,7 +21,7 @@ export default function ProductCard({product}: {product: Product}) {
           description={
             <div className="product__meta">
               <span className="product__price">
-                ${new Intl.NumberFormat("es-ES").format(product.price)}
+                ${new Intl.NumberFormat('es-ES').format(product.price)}
               </span>
             </div>
           }

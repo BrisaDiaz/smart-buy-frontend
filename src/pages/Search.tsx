@@ -1,19 +1,19 @@
-import React from "react";
-import {useNavigate} from "react-router-dom";
-import {Typography, Layout, Checkbox, message, Collapse} from "antd";
-import {CheckboxValueType} from "antd/lib/checkbox/Group";
-import {v4 as uuid} from "uuid";
+import React from 'react';
+import {useNavigate} from 'react-router-dom';
+import {Typography, Layout, Checkbox, message, Collapse} from 'antd';
+import {CheckboxValueType} from 'antd/lib/checkbox/Group';
+import {v4 as uuid} from 'uuid';
 
-import {generateSearchUrl} from "../utils";
-import Cart from "../components/svg/Cart";
-import ErrorMessage from "../components/ErrorMessage";
-import ProductSkeleton from "../components/ProductCartSkeleton";
-import {useAppSelector} from "../hooks/useStore";
-import ProductCard from "../components/ProductCard";
-import Header from "../components/Header";
-import {Product} from "../interfaces";
-import {MARKET_OPTIONS} from "../constants";
-import {useLazyGetProductsByMarketsQuery} from "../services";
+import {generateSearchUrl} from '../utils';
+import Cart from '../components/svg/Cart';
+import ErrorMessage from '../components/ErrorMessage';
+import ProductSkeleton from '../components/ProductCartSkeleton';
+import {useAppSelector} from '../hooks/useStore';
+import ProductCard from '../components/ProductCard';
+import Header from '../components/Header';
+import {Product} from '../interfaces';
+import {MARKET_OPTIONS} from '../constants';
+import {useLazyGetProductsByMarketsQuery} from '../services';
 const {Content} = Layout;
 
 const {Title, Paragraph} = Typography;
@@ -24,14 +24,14 @@ function App() {
   const [products, setProducts] = React.useState<Product[]>([]);
 
   const [isCollapseActive, setIsCollapseActive] = React.useState<boolean>(false);
-  const [error, setError] = React.useState<"404" | "500" | "">("");
+  const [error, setError] = React.useState<'404' | '500' | ''>('');
 
   const [trigger, result] = useLazyGetProductsByMarketsQuery();
   const marketSearch = useAppSelector((state) => state.marketSearch);
 
   React.useEffect(() => {
     if (result.isError) {
-      setError("500");
+      setError('500');
       setProducts([]);
 
       return;
@@ -41,8 +41,8 @@ function App() {
 
       setProducts(data.products);
 
-      if (data.total === 0) return setError("404");
-      setError("");
+      if (data.total === 0) return setError('404');
+      setError('');
     }
   }, [result]);
 
@@ -53,7 +53,7 @@ function App() {
   const onMarketSelectChange = (list: CheckboxValueType[]) => {
     if (list.length > 3) {
       return warning(
-        "Como máximo solo se es permitido consultar en tres supermercados a la misma vez.",
+        'Como máximo solo se es permitido consultar en tres supermercados a la misma vez.',
       );
     }
 
@@ -85,7 +85,7 @@ function App() {
         <Content className="content">
           <div onClick={handleCollapse}>
             <Collapse
-              activeKey={[isCollapseActive ? "1" : ""]}
+              activeKey={[isCollapseActive ? '1' : '']}
               bordered={false}
               className="select-markets__section"
             >
@@ -144,85 +144,80 @@ function App() {
       </section>
 
       <style>{`
-      .page{
-        min-height:100vh
-      }
-     
-      .products__grind{
-          min-height:40vh;
-      display: grid;
-    gap: 10px;
-      }
-
-      .content{
-             min-height:90vh;
-        max-width: 1250px;
-        margin: 0 auto;
-        padding: 0 1rem
-     
-      }
-  
-      .search__results{ 
-        margin-bottom:2rem;
-      }
-      .search__meta h1{
-        margin-bottom:0;
-        font-size: 25px;
-        text-transform:capitalize
-      }
-.ant-collapse-header{
-     font-weight: 600;
-         opacity: 0.95;
-             padding: 12px 0 !important;
+.page{
+     min-height:100vh;
 }
-      .select-markets__section{
-            margin: 1rem 0 ;
-      }
-         .select-markets__section span{
-           font-size:16px
-         }
-    
-      .ant-checkbox-group{ 
-        text-transform:capitalize
-      }
-    .cart__illustration{display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 500px;
-    padding: 2rem 2rem 4rem 1rem;
-        background: #dcdcdc70;
-        border-radius:12px;
-            margin-top: 1rem;
+ .products__grind{
+     min-height: 40vh;
+     display: grid;
+     gap: 10px;
+}
+ .content{
+     min-height:90vh;
+     max-width: 1250px;
+     margin: 0 auto;
+     padding: 0 1rem;
+}
+ .search__results{
+     margin-bottom:2rem;
+}
+ .search__meta h1{
+     margin-bottom:0;
+     font-size: 25px;
+     text-transform:capitalize ;
+}
+ .ant-collapse-header{
+     font-weight: 600;
+     opacity: 0.95;
+     padding: 12px 0 !important;
+}
+ .select-markets__section{
+     margin: 1rem 0;
+}
+ .select-markets__section span{
+     font-size:16px;
+}
+ .ant-checkbox-group{
+     text-transform:capitalize;
+}
+ .cart__illustration{
+    display: flex;
+     align-items: center;
+     justify-content: center;
+     min-height: 500px;
+     padding: 2rem 2rem 4rem 1rem;
+     background: #dcdcdc70;
+     border-radius:12px;
+     margin-top: 1rem;
+}
+ .cart__illustration svg{
+     max-width: 150px;
+     opacity: 0.2;
+}
+ @media(min-width:500px){
+     .products__grind{
+         grid-template-columns: 1fr 1fr;
     }
-        .cart__illustration svg{
-              max-width: 150px;
-    opacity: 0.2;
-        }
-      @media(min-width:500px){
-          .products__grind{
-grid-template-columns: 1fr 1fr;
-          }
-      }
-            @media(min-width:760px){
-          .products__grind{
-grid-template-columns: 1fr 1fr 1fr;
-          }
-                   .illustration__section__text{
-max-width: 370px;
-          }
-      }
-                  @media(min-width:1024px){
-        
-      .select-markets__section{
-      width: 260px;
-    float: left;
-    margin:0;
-    padding-right:1.5rem;
-          }
-        .ant-checkbox-group{
-          flex-direction:column
-        }
-      }
+}
+ @media(min-width:760px){
+     .products__grind{
+         grid-template-columns: 1fr 1fr 1fr;
+    }
+     .illustration__section__text{
+         max-width: 370px;
+    }
+}
+ @media(min-width:1024px){
+     .select-markets__section{
+         width: 260px;
+         float: left;
+         margin:0;
+         padding-right:1.5rem;
+    }
+     .ant-checkbox-group{
+         flex-direction:column;
+    }
+}
       `}</style>
     </Layout>
   );

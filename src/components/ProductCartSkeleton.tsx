@@ -1,4 +1,4 @@
-import {Skeleton, Card} from "antd";
+import {Skeleton, Card} from 'antd';
 export default function ProductSkeleton() {
   return (
     <>

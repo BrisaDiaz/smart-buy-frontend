@@ -1,18 +1,18 @@
-import {createSlice} from "@reduxjs/toolkit";
+import {createSlice} from '@reduxjs/toolkit';
 
-import {Market} from "../../interfaces";
+import {Market} from '../../interfaces';
 
 export interface MarketState {
   searchQuery: string;
   markets: Market[];
 }
 const initialState: MarketState = {
-  searchQuery: "",
+  searchQuery: '',
   markets: [],
 };
 
 export const marketSlice = createSlice({
-  name: "marketSearch",
+  name: 'marketSearch',
   initialState,
   reducers: {
     setSearchQuery: (state: MarketState, action: {payload: string}) => {

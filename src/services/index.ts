@@ -1,12 +1,12 @@
-import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
+import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 
-import {Product, Market, TrackedProduct, TrackedPrice} from "../interfaces";
-import {API_BASE_PATH} from "../constants";
+import {Product, Market, TrackedProduct, TrackedPrice} from '../interfaces';
+import {API_BASE_PATH} from '../constants';
 
 export const marketsScraperApi = createApi({
-  reducerPath: "marketsScraperApi",
+  reducerPath: 'marketsScraperApi',
   baseQuery: fetchBaseQuery({baseUrl: API_BASE_PATH as string}),
-  tagTypes: ["Product", "TrackedProduct"],
+  tagTypes: ['Product', 'TrackedProduct'],
   endpoints: (builder) => ({
     getProductsByMarkets: builder.query<
       {total: number; products: Product[]},
@@ -15,19 +15,19 @@ export const marketsScraperApi = createApi({
       query: ({searchQuery, markets}) => {
         const query = new URLSearchParams();
 
-        query.append("query", searchQuery);
+        query.append('query', searchQuery);
 
-        markets.forEach((market) => query.append("market", market));
+        markets.forEach((market) => query.append('market', market));
 
         return `/api/v1/market/search?${query.toString()}`;
       },
       providesTags: (result) =>
         result
           ? result.products.map((product) => ({
-              type: "Product",
+              type: 'Product',
               link: product.link,
             }))
-          : ["Product"],
+          : ['Product'],
       // cache valid for 10min
       keepUnusedDataFor: 60 * 10,
     }),
@@ -45,19 +45,19 @@ export const marketsScraperApi = createApi({
         result
           ? [
               {
-                type: "TrackedProduct",
+                type: 'TrackedProduct',
                 link: result.product.link,
               },
             ]
-          : ["TrackedProduct"],
+          : ['TrackedProduct'],
     }),
     createTrackingProductRecord: builder.mutation<TrackedProduct, Product>({
       query: (product) => ({
-        url: "/api/v1/tracker/products",
-        method: "POST",
+        url: '/api/v1/tracker/products',
+        method: 'POST',
         body: {product},
       }),
-      invalidatesTags: (result, error, arg) => [{type: "TrackedProduct", link: arg.link}],
+      invalidatesTags: (result, error, arg) => [{type: 'TrackedProduct', link: arg.link}],
     }),
     updateTrackingProductPrice: builder.mutation<
       {
@@ -68,10 +68,10 @@ export const marketsScraperApi = createApi({
     >({
       query: ({link, price}) => ({
         url: API_BASE_PATH + `/api/v1/tracker/products?link=${link}`,
-        method: "PUT",
+        method: 'PUT',
         body: price ? {price} : {},
       }),
-      invalidatesTags: (result, error, arg) => [{type: "TrackedProduct", link: arg.link}],
+      invalidatesTags: (result, error, arg) => [{type: 'TrackedProduct', link: arg.link}],
     }),
   }),
 });

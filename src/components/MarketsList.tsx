@@ -1,14 +1,14 @@
-import veaLogo from "../public/vea-logo.png";
+import veaLogo from '../public/vea-logo.png';
 // import carrefourLogo from "../public/carrefour-logo.png";
-import hiperlibertadLogo from "../public/hiperlibertad-logo.png";
-import discoLogo from "../public/disco-logo.png";
-import cotoLogo from "../public/coto-logo.png";
-import cordiezLogo from "../public/cordiez-logo.png";
-import jumboLogo from "../public/jumbo-logo.png";
-import supermamiLogo from "../public/super-mami-logo.png";
-import diaLogo from "../public/dia-logo.png";
-import maxiconsumoLogo from "../public/maxiconsumo-logo.png";
-import laAnonimaLogo from "../public/la-anonima-logo.png";
+import hiperlibertadLogo from '../public/hiperlibertad-logo.png';
+import discoLogo from '../public/disco-logo.png';
+import cotoLogo from '../public/coto-logo.png';
+import cordiezLogo from '../public/cordiez-logo.png';
+import jumboLogo from '../public/jumbo-logo.png';
+import supermamiLogo from '../public/super-mami-logo.png';
+import diaLogo from '../public/dia-logo.png';
+import maxiconsumoLogo from '../public/maxiconsumo-logo.png';
+import laAnonimaLogo from '../public/la-anonima-logo.png';
 
 export default function MarketsList() {
   return (

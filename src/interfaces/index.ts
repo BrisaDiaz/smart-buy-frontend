@@ -1,14 +1,14 @@
 export type Market =
-  | "cordiez"
-  | "coto"
-  | "dia"
-  | "disco"
-  | "hiperlibertad"
-  | "jumbo"
-  | "la anonima online"
-  | "maxiconsumo"
-  | "super mami"
-  | "vea";
+  | 'cordiez'
+  | 'coto'
+  | 'dia'
+  | 'disco'
+  | 'hiperlibertad'
+  | 'jumbo'
+  | 'la anonima online'
+  | 'maxiconsumo'
+  | 'super mami'
+  | 'vea';
 export interface Product {
   price: number;
   title: string;
