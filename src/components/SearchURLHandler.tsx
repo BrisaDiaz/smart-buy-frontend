@@ -13,9 +13,11 @@ export default function SearchURLHandler({children}: {children: ReactNode}) {
   useEffect(() => {
     const {markets, query} = getValidSearchParams();
 
-    if (marketSearch.searchQuery !== query) dispatch(setSearchQuery(query));
-    if (markets?.join('') !== marketSearch?.markets?.join(''))
-      dispatch(setMarkets(markets as Market[]));
+    const queryChange = marketSearch.searchQuery !== query;
+    const marketChange = markets?.join('') !== marketSearch?.markets?.join('');
+
+    if (queryChange || marketChange) dispatch(setSearchQuery(query));
+    if (marketChange) dispatch(setMarkets(markets as Market[]));
   }, [location]);
 
   return <div>{children}</div>;

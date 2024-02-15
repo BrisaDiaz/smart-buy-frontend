@@ -4,7 +4,7 @@ import {Product, Market} from '../interfaces';
 export const generateSearchUrl = ({search, markets}: {search?: string; markets?: any[]}) => {
   const params = new URLSearchParams(new URL(window.location.toString().replace('/#', '')).search);
 
-  const searchQuery = search || params.get('query');
+  const searchQuery = search !== undefined ? search : params.get('query');
   const marketsQuery = markets || [
     ...new Set(
       params.getAll('market').filter((market) => MARKET_OPTIONS.includes(market as Market)),
@@ -13,7 +13,11 @@ export const generateSearchUrl = ({search, markets}: {search?: string; markets?:
 
   const query = new URLSearchParams();
 
-  if (searchQuery && typeof searchQuery === 'string') query.append('query', searchQuery);
+  if (searchQuery && typeof searchQuery === 'string') {
+    query.append('query', searchQuery);
+  } else {
+    query.delete('query');
+  }
   if (marketsQuery.length > 0)
     marketsQuery.length > 3
       ? marketsQuery.slice(0, 3).forEach((market) => query.append('market', market as string))
