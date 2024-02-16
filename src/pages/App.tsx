@@ -5,37 +5,30 @@ import Illustration from '../public/illustration.jpg';
 import MarketsList from '../components/MarketsList';
 import Header from '../components/Header';
 
-const { Content } = Layout;
-const { Title } = Typography;
+const {Content} = Layout;
+const {Title} = Typography;
 
 function App() {
   return (
     <Layout>
       <Header loading={false} />
-      <section className='page'>
-        <Content className='content'>
-          <section className='illustration__section'>
-            <div className=' illustration__section__text'>
-              <Title level={1}>
-                Te ayudamos a mantener la economía del hogar{' '}
-              </Title>{' '}
+      <section className="page">
+        <Content className="content">
+          <section className="illustration__section">
+            <div className=" illustration__section__text">
+              <Title level={1}>Te ayudamos a mantener la economía del hogar </Title>{' '}
               <Title level={2}>
-                Encontrá y trackea los mejores precios disponibles en tus
-                supermercados online favoritos desde un solo lugar.
+                Encontrá y trackea los mejores precios disponibles en tus supermercados online
+                favoritos desde un solo lugar.
               </Title>
-              <Link to='/search'>
-                <Button
-                  className='action-bottom'
-                  shape='round'
-                  size='large'
-                  type='primary'
-                >
+              <Link to="/search">
+                <Button className="action-bottom" shape="round" size="large" type="primary">
                   Comenzar
                 </Button>
               </Link>
             </div>
 
-            <div className='illustration__wrapper' />
+            <div className="illustration__wrapper" />
           </section>
           <MarketsList />
         </Content>

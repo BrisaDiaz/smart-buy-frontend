@@ -70,7 +70,7 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    if (!marketSearch.searchQuery || marketSearch.markets.length === 0) return;
+    if (marketSearch.markets.length === 0 || !marketSearch.searchQuery) return setProducts([]);
 
     trigger({
       searchQuery: marketSearch.searchQuery,
@@ -107,7 +107,7 @@ function App() {
               <Cart />
             </section>
           )}
-          {result.isFetching && products.length === 0 && (
+          {result.isFetching && (
             <section className="search__results">
               <div className="search__meta">
                 <Title level={1}>{marketSearch.searchQuery}</Title>
@@ -123,7 +123,7 @@ function App() {
 
           {error && !result.isFetching && <ErrorMessage status={error} />}
 
-          {products.length > 0 && !error && (
+          {products.length > 0 && !error && !result.isFetching && (
             <section className="search__results">
               <div className="search__meta">
                 <Title level={1}>{marketSearch.searchQuery}</Title>
