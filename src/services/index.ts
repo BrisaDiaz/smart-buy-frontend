@@ -81,3 +81,5 @@ export const {
   useCreateTrackingProductRecordMutation,
   useUpdateTrackingProductPriceMutation,
 } = marketsScraperApi;
+export const useGetProductsByMarketsQueryState =
+  marketsScraperApi.endpoints.getProductsByMarkets.useQueryState;

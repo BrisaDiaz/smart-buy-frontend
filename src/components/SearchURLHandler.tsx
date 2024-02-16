@@ -1,24 +1,27 @@
-import {ReactNode, useEffect} from 'react';
-import {useLocation} from 'react-router-dom';
+import { ReactNode, useEffect } from 'react';
 
-import {useAppDispatch, useAppSelector} from '../hooks/useStore';
-import {getValidSearchParams} from '../utils';
+import { useLazyGetProductsByMarketsQuery } from '../services';
+import { useAppDispatch } from '../hooks/useStore';
+import { getValidSearchParams } from '../utils';
 import { setSearchQuery, setMarkets } from '../features/market/marketSlice';
 export default function SearchURLHandler({
   children,
 }: {
   children: ReactNode;
 }) {
-  const location = useLocation();
   const dispatch = useAppDispatch();
-  const marketSearch = useAppSelector((state) => state.marketSearch);
+  const [trigger] = useLazyGetProductsByMarketsQuery({
+    refetchOnFocus: false,
+  });
 
   useEffect(() => {
     const { markets, query } = getValidSearchParams();
 
-    dispatch(setSearchQuery(query || marketSearch.searchQuery));
-    dispatch(setMarkets(markets.length ? markets : marketSearch.markets));
-  }, [location]);
+    dispatch(setSearchQuery(query));
+    dispatch(setMarkets(markets));
+    if (markets.length === 0 || !query) return;
+    trigger({ markets, searchQuery: query });
+  }, []);
 
   return <div>{children}</div>;
 }

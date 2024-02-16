@@ -1,6 +1,6 @@
 import React from 'react';
 import {useNavigate} from 'react-router-dom';
-import { Typography, Layout, Checkbox, message, Collapse, Button } from 'antd';
+import { Typography, Layout, Checkbox, message, Collapse } from 'antd';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import { v4 as uuid } from 'uuid';
 
@@ -8,12 +8,13 @@ import { generateSearchUrl } from '../utils';
 import Cart from '../components/svg/Cart';
 import ErrorMessage from '../components/ErrorMessage';
 import ProductSkeleton from '../components/ProductCartSkeleton';
-import { useAppSelector } from '../hooks/useStore';
+import { useAppSelector, useAppDispatch } from '../hooks/useStore';
 import ProductCard from '../components/ProductCard';
 import Header from '../components/Header';
-import { Product } from '../interfaces';
+import { Product, Market } from '../interfaces';
 import { MARKET_OPTIONS } from '../constants';
-import { useLazyGetProductsByMarketsQuery } from '../services';
+import { useGetProductsByMarketsQueryState } from '../services';
+import { setMarkets } from '../features/market/marketSlice';
 const { Content } = Layout;
 
 const { Title, Paragraph } = Typography;
@@ -21,19 +22,20 @@ const CheckboxGroup = Checkbox.Group;
 
 function App() {
   const navigate = useNavigate();
-  const [trigger, result] = useLazyGetProductsByMarketsQuery({
-    refetchOnFocus: false,
-  });
   const marketSearch = useAppSelector((state) => state.marketSearch);
+  const dispatch = useAppDispatch();
+
+  const result = useGetProductsByMarketsQueryState({
+    searchQuery: marketSearch.searchQuery,
+    markets: marketSearch.markets,
+  });
 
   const [products, setProducts] = React.useState<Product[]>([]);
-  const [markets, setMarkets] = React.useState<string[]>(marketSearch.markets);
   const [isCollapseActive, setIsCollapseActive] =
     React.useState<boolean>(false);
   const [error, setError] = React.useState<'404' | '500' | ''>('');
 
   React.useEffect(() => {
-    console.log(result)
     if (result.isError && result.error?.name !== 'AbortError') {
       setError('500');
       setProducts([]);
@@ -60,13 +62,10 @@ function App() {
         'Como máximo solo se es permitido consultar en tres supermercados a la misma vez.',
       );
     }
-    setMarkets(list as string[]);
+    dispatch(setMarkets(list as Market[]));
+    navigate(generateSearchUrl({ markets: list }));
   };
-  const onMarketsConfirm = (e: React.MouseEvent<HTMLElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    navigate(generateSearchUrl({ markets }));
-  };
+
   const handleCollapse = () => {
     if (window.innerWidth < 1023) {
       setIsCollapseActive((isActive) => !isActive);
@@ -76,24 +75,6 @@ function App() {
   React.useEffect(() => {
     setIsCollapseActive(window.innerWidth > 1023);
   }, []);
-
-  React.useEffect(() => {
-    if (marketSearch.markets.length === 0 || !marketSearch.searchQuery)
-      return setProducts([]);
-
-    const { abort, unsubscribe } = trigger(
-      {
-        searchQuery: marketSearch.searchQuery,
-        markets: marketSearch.markets,
-      },
-      true,
-    );
-
-    return () => {
-      abort();
-      unsubscribe();
-    };
-  }, [marketSearch]);
 
   return (
     <Layout className='page'>
@@ -116,14 +97,6 @@ function App() {
                   options={MARKET_OPTIONS}
                   onChange={onMarketSelectChange}
                 />
-                <Button
-                  className='confirm-market-btn'
-                  shape='round'
-                  type='primary'
-                  onClick={onMarketsConfirm}
-                >
-                  Confirm Markets
-                </Button>
               </Collapse.Panel>
             </Collapse>
           </div>

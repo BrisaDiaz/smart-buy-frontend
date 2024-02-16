@@ -1,12 +1,28 @@
 import {Layout, Input} from 'antd';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 
+import { useLazyGetProductsByMarketsQuery } from '../services';
+import { useAppSelector, useAppDispatch } from '../hooks/useStore';
 import { generateSearchUrl } from '../utils';
+import { setSearchQuery } from '../features/market/marketSlice';
 import logo from '../public/logo.png';
 export default function Header({ loading }: { loading?: boolean }) {
   const navigate = useNavigate();
-  const handleSearch = (search: string) => {
+  const marketSearch = useAppSelector((state) => state.marketSearch);
+  const dispatch = useAppDispatch();
+  const [trigger] = useLazyGetProductsByMarketsQuery({
+    refetchOnFocus: false,
+  });
+  const handleSearch = async (search: string) => {
+    await trigger(
+      {
+        searchQuery: search,
+        markets: marketSearch.markets,
+      },
+      true,
+    );
     navigate(generateSearchUrl({ search: search?.trim() }));
+    dispatch(setSearchQuery(search?.trim()));
   };
   const [params] = useSearchParams();
 
