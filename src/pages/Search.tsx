@@ -36,7 +36,7 @@ function App() {
   const [error, setError] = React.useState<'404' | '500' | ''>('');
 
   React.useEffect(() => {
-    if (result.isError && result.error?.name !== 'AbortError') {
+    if (result.isError) {
       setError('500');
       setProducts([]);
 

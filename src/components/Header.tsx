@@ -1,4 +1,4 @@
-import {Layout, Input} from 'antd';
+import { Layout, Input, message } from 'antd';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 
 import { useLazyGetProductsByMarketsQuery } from '../services';
@@ -14,13 +14,20 @@ export default function Header({ loading }: { loading?: boolean }) {
     refetchOnFocus: false,
   });
   const handleSearch = async (search: string) => {
-    await trigger(
-      {
-        searchQuery: search,
-        markets: marketSearch.markets,
-      },
-      true,
-    );
+    if (!marketSearch.markets.length) {
+      message.warning('Por favor seleccione algún supermercado');
+    } else if (!search) {
+      message.warning('Por favor inserte el producto a buscar');
+    } else {
+      await trigger(
+        {
+          searchQuery: search,
+          markets: marketSearch.markets,
+        },
+        true,
+      );
+    }
+
     navigate(generateSearchUrl({ search: search?.trim() }));
     dispatch(setSearchQuery(search?.trim()));
   };
