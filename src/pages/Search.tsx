@@ -1,43 +1,47 @@
 import React from 'react';
 import {useNavigate} from 'react-router-dom';
-import {Typography, Layout, Checkbox, message, Collapse} from 'antd';
-import {CheckboxValueType} from 'antd/lib/checkbox/Group';
-import {v4 as uuid} from 'uuid';
+import { Typography, Layout, Checkbox, message, Collapse, Button } from 'antd';
+import { CheckboxValueType } from 'antd/lib/checkbox/Group';
+import { v4 as uuid } from 'uuid';
 
-import {generateSearchUrl} from '../utils';
+import { generateSearchUrl } from '../utils';
 import Cart from '../components/svg/Cart';
 import ErrorMessage from '../components/ErrorMessage';
 import ProductSkeleton from '../components/ProductCartSkeleton';
-import {useAppSelector} from '../hooks/useStore';
+import { useAppSelector } from '../hooks/useStore';
 import ProductCard from '../components/ProductCard';
 import Header from '../components/Header';
-import {Product} from '../interfaces';
-import {MARKET_OPTIONS} from '../constants';
-import {useLazyGetProductsByMarketsQuery} from '../services';
-const {Content} = Layout;
+import { Product } from '../interfaces';
+import { MARKET_OPTIONS } from '../constants';
+import { useLazyGetProductsByMarketsQuery } from '../services';
+const { Content } = Layout;
 
-const {Title, Paragraph} = Typography;
+const { Title, Paragraph } = Typography;
 const CheckboxGroup = Checkbox.Group;
 
 function App() {
   const navigate = useNavigate();
-  const [products, setProducts] = React.useState<Product[]>([]);
-
-  const [isCollapseActive, setIsCollapseActive] = React.useState<boolean>(false);
-  const [error, setError] = React.useState<'404' | '500' | ''>('');
-
-  const [trigger, result] = useLazyGetProductsByMarketsQuery();
+  const [trigger, result] = useLazyGetProductsByMarketsQuery({
+    refetchOnFocus: false,
+  });
   const marketSearch = useAppSelector((state) => state.marketSearch);
 
+  const [products, setProducts] = React.useState<Product[]>([]);
+  const [markets, setMarkets] = React.useState<string[]>(marketSearch.markets);
+  const [isCollapseActive, setIsCollapseActive] =
+    React.useState<boolean>(false);
+  const [error, setError] = React.useState<'404' | '500' | ''>('');
+
   React.useEffect(() => {
-    if (result.isError) {
+    console.log(result)
+    if (result.isError && result.error?.name !== 'AbortError') {
       setError('500');
       setProducts([]);
 
       return;
     }
     if (result.isSuccess) {
-      const data: {total: number; products: Product[]} = result.data;
+      const data: { total: number; products: Product[] } = result.data;
 
       setProducts(data.products);
 
@@ -56,8 +60,12 @@ function App() {
         'Como máximo solo se es permitido consultar en tres supermercados a la misma vez.',
       );
     }
-
-    navigate(generateSearchUrl({markets: list}));
+    setMarkets(list as string[]);
+  };
+  const onMarketsConfirm = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(generateSearchUrl({ markets }));
   };
   const handleCollapse = () => {
     if (window.innerWidth < 1023) {
@@ -70,50 +78,69 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    if (marketSearch.markets.length === 0 || !marketSearch.searchQuery) return setProducts([]);
+    if (marketSearch.markets.length === 0 || !marketSearch.searchQuery)
+      return setProducts([]);
 
-    trigger({
-      searchQuery: marketSearch.searchQuery,
-      markets: marketSearch.markets,
-    });
+    const { abort, unsubscribe } = trigger(
+      {
+        searchQuery: marketSearch.searchQuery,
+        markets: marketSearch.markets,
+      },
+      true,
+    );
+
+    return () => {
+      abort();
+      unsubscribe();
+    };
   }, [marketSearch]);
 
   return (
-    <Layout className="page">
+    <Layout className='page'>
       <Header loading={result.isFetching} />
       <section>
-        <Content className="content">
+        <Content className='content'>
           <div onClick={handleCollapse}>
             <Collapse
               activeKey={[isCollapseActive ? '1' : '']}
               bordered={false}
-              className="select-markets__section"
+              className='select-markets__section'
             >
               <Collapse.Panel
-                key="1"
-                className="collapse-panel__header"
-                header="En donde deseas consultar?"
+                key='1'
+                className='collapse-panel__header'
+                header='En donde deseas consultar?'
               >
                 <CheckboxGroup
                   defaultValue={marketSearch.markets}
                   options={MARKET_OPTIONS}
                   onChange={onMarketSelectChange}
                 />
+                <Button
+                  className='confirm-market-btn'
+                  shape='round'
+                  type='primary'
+                  onClick={onMarketsConfirm}
+                >
+                  Confirm Markets
+                </Button>
               </Collapse.Panel>
             </Collapse>
           </div>
           {!result.isFetching && !error && products.length === 0 && (
-            <section className="cart__illustration">
+            <section className='cart__illustration'>
               <Cart />
             </section>
           )}
           {result.isFetching && (
-            <section className="search__results">
-              <div className="search__meta">
+            <section className='search__results'>
+              <div className='search__meta'>
                 <Title level={1}>{marketSearch.searchQuery}</Title>
-                <Paragraph type="secondary">Cosas buenas necesitan tiempo...</Paragraph>
+                <Paragraph type='secondary'>
+                  Cosas buenas necesitan tiempo...
+                </Paragraph>
               </div>
-              <section className="products__grind skeleton__grid">
+              <section className='products__grind skeleton__grid'>
                 {new Array(9).fill(1).map((el, index) => (
                   <ProductSkeleton key={index} />
                 ))}
@@ -124,16 +151,20 @@ function App() {
           {error && !result.isFetching && <ErrorMessage status={error} />}
 
           {products.length > 0 && !error && !result.isFetching && (
-            <section className="search__results">
-              <div className="search__meta">
+            <section className='search__results'>
+              <div className='search__meta'>
                 <Title level={1}>{marketSearch.searchQuery}</Title>
                 {result.isFetching ? (
-                  <Paragraph type="secondary">Cosas buenas necesitan tiempo...</Paragraph>
+                  <Paragraph type='secondary'>
+                    Cosas buenas necesitan tiempo...
+                  </Paragraph>
                 ) : (
-                  <Paragraph type="secondary">{products.length} resultados</Paragraph>
+                  <Paragraph type='secondary'>
+                    {products.length} resultados
+                  </Paragraph>
                 )}
               </div>
-              <section className="products__grind">
+              <section className='products__grind'>
                 {products.map((product) => (
                   <ProductCard key={uuid()} product={product} />
                 ))}
@@ -179,6 +210,10 @@ function App() {
 }
  .ant-checkbox-group{
      text-transform:capitalize;
+}
+.ant-btn.confirm-market-btn{
+  margin-top: 24px;
+    line-height: 1em;
 }
  .cart__illustration{
     display: flex;

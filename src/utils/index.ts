@@ -29,12 +29,18 @@ export const generateSearchUrl = ({search, markets}: {search?: string; markets?:
   return searchURL;
 };
 
-export const getValidSearchParams = () => {
+export const getValidSearchParams = (): {
+  markets: Market[];
+  query: string;
+} => {
   const validSearchURL = generateSearchUrl({});
 
   const params = new URLSearchParams(validSearchURL.split('?')[1]);
 
-  return {markets: params.getAll('market'), query: params.get('query') || ''};
+  return {
+    markets: params.getAll('market') as Market[],
+    query: params.get('query') || '',
+  };
 };
 
 export const generateSlug = (string: string) => {
